@@ -1,0 +1,33 @@
+#!/bin/sh
+
+GNUMAKE=gnumake
+LOCAL_DIR=`pwd`
+
+LIBR3_DIR=/usr/local/Cellar/r3/1.3.3/
+
+. $MAKL_DIR/cf/makl.init
+makl_args_init "$@"
+
+makl_pkg_name "rack"
+makl_pkg_version
+
+makl_set_var_mk "CC" "clang"
+makl_set_var_mk "CXX" "clang++"
+
+makl_append_var_mk "CFLAGS" "-g -march=x86-64"
+
+# FIXME: OSX specific configuration.
+makl_append_var_mk "CFLAGS" "-std=c++11 -stdlib=libc++ -I/Library/Developer/CommandLineTools/usr/lib/c++/v1"
+makl_append_var_mk "LDFLAGS" "-lc++"
+
+makl_set_var_mk "LOCALDIR" "${LOCAL_DIR}"
+makl_append_var_mk "CFLAGS" "-I\$(LOCALDIR)"
+makl_append_var_mk "CFLAGS" "-I\$(LOCALDIR)/include"
+
+makl_set_var_mk "LIBR3DIR" "${LIBR3_DIR}"
+makl_append_var_mk "LIBR3_CFLAGS" "-I\$(LIBR3DIR)/include"
+makl_append_var_mk "LIBR3_LDADD" "\$(LIBR3DIR)/lib/libr3.a"
+makl_append_var_mk "LIBR3_LDFLAGS" "-L\$(LIBR3DIR)/lib -lr3"
+
+makl_args_handle "$@"
+. $MAKL_DIR/cf/makl.term
